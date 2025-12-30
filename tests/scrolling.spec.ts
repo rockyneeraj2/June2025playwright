@@ -28,4 +28,5 @@ test('scrool down ', async ({ page }) => {
 
     //3. scroll down to the bottom of the page:
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(2000);
 });
