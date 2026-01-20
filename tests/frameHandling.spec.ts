@@ -35,12 +35,6 @@ await page
   .click();
 ```
 
-### Why this is best
-
-✅ Auto-waits for frame
-✅ Cleaner syntax
-✅ Less flaky
-✅ Preferred in Playwright
 
 🎯 **Interview line:**
 
@@ -138,13 +132,6 @@ await page.frameLocator('#loginFrame').locator('#loginBtn').click();
 ```
 
 
-## 🔁 Selenium vs Playwright (Frames)
-
-| Selenium           | Playwright     |
-| ------------------ | -------------- |
-| switchTo().frame() | frameLocator() |
-| Manual wait        | Auto-wait      |
-| More flaky         | More stable    |
 
 
 > In Playwright, I handle iframes using `frameLocator()` which automatically waits for the frame and allows stable interaction without switching context.

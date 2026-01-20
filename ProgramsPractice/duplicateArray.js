@@ -1,18 +1,11 @@
-function findDuplicates(arr) {
-  const count = {};
-  const duplicates = [];
+let str = [1,2,3,4,5,3]
+let duplicate = [];
 
-  for (let num of arr) {
-    count[num] = (count[num] || 0) + 1;
-  }
-
-  for (let key in count) {
-    if (count[key] > 1) {
-      duplicates.push(Number(key));
+for(let i=0;i<str.length;i++){
+    for(let j=i+1;j<str.length;j++){
+        if(str[i]===str[j] && !duplicate.includes(str[i])){
+            duplicate+=str[i];
+        }
     }
-  }
-
-  return duplicates;
 }
-
-console.log(findDuplicates([10, 20, 10, 30, 20, 40]));
+console.log(duplicate)
