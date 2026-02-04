@@ -1,16 +1,13 @@
-let sentence = "I love java and I love javascript";
+let str= "java,python,java,python,c";
+let word= str.split(',')
+let map= new Map();
 
-let words = sentence.split(" ");   // Step 1
-let count = {};                    // Step 2
-
-// Step 3: Count words
-for (let word of words) {
-  count[word] = (count[word] || 0) + 1;
+for(let char of word){
+    map.set(char,(map.get(char)||0)+1)
 }
 
-// Step 4: Print duplicate words
-for (let word in count) {
-  if (count[word] === 1) {
-    console.log(word + " = " + count[word]);
-  }
+for(let [key,value] of map){
+    if(value>1){
+        console.log(key +"" )
+    }
 }

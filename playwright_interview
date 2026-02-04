@@ -1,0 +1,399 @@
+What is Playwright, and why would you choose Playwright over Selenium in your project?
+
+“Playwright is an open-source end-to-end test automation tool developed by Microsoft. Compared to Selenium, Playwright is faster and more reliable because it has built-in auto-wait mechanisms, which reduce flaky tests. It supports cross-browser testing for Chromium, Firefox, and WebKit using a single API. We can also perform API testing using Playwright’s request context. Parallel execution is supported out of the box through Playwright Test, which helps reduce execution time in CI pipelines.”
+
+How does Playwright handle auto-waiting, and why is it better than using explicit waits in Selenium?
+
+“Playwright has built-in auto-waiting. Before performing any action like click or type, it automatically waits for the element to be present in the DOM, visible, enabled, and stable. Because of this, we usually don’t need to write explicit waits, which helps reduce flaky tests. In Selenium, we often depend on explicit or implicit waits, whereas Playwright handles this internally. If needed for special cases, Playwright still provides methods like waitForSelector() or waiting for network events.”
+
+How do you handle parallel execution in Playwright, and how does it work internally?
+
+“Playwright supports parallel execution using workers. We configure the number of workers in the playwright.config file. Each worker runs tests in a separate browser context, which ensures test isolation and avoids shared state issues. By default, Playwright automatically decides the number of workers based on CPU cores, and in CI we usually limit the worker count for stability. This parallel execution significantly reduces execution time.”
+
+“I integrate Playwright with Jenkins by configuring a Jenkins pipeline job. In the pipeline, I install dependencies, install Playwright browsers, and execute tests using npm commands like npx playwright test. I configure environment variables and control parallel execution using the Playwright config. After execution, I publish Playwright HTML or Allure reports in Jenkins. This setup allows tests to run automatically on every build or pull request.”
+
+Got you 👍
+Below is a **COMPLETE, END-TO-END Playwright interview question set** — from **basic → advanced → framework → CI/CD → real-world scenarios → coding round**.
+This is exactly what **5–8 yrs SDET / QA Automation** interviews expect.
+
+Use this as your **single Playwright Bible** 📘
+
+---
+
+# 🎯 PLAYWRIGHT INTERVIEW QUESTIONS (COMPLETE)
+
+---
+
+## 🔹 1. BASIC PLAYWRIGHT QUESTIONS
+
+### Q1. What is Playwright?
+
+**Answer:**
+Playwright is an **open-source end-to-end test automation tool** developed by Microsoft. It supports **Chromium, Firefox, and WebKit**, and enables **UI, API, and cross-browser testing** with built-in auto-wait and parallel execution.
+
+---
+
+### Q2. Playwright vs Selenium?
+
+| Playwright                     | Selenium                    |
+| ------------------------------ | --------------------------- |
+| Auto-wait built-in             | Manual waits                |
+| Faster execution               | Slower                      |
+| Supports API testing           | UI only                     |
+| Parallel by default            | Needs setup                 |
+| Handles modern web apps better | Struggles with dynamic apps |
+
+---
+
+### Q3. Languages supported by Playwright?
+
+* JavaScript / TypeScript
+* Java
+* Python
+* C#
+
+---
+
+## 🔹 2. PLAYWRIGHT ARCHITECTURE
+
+### Q4. Explain Playwright architecture.
+
+**Answer:**
+Playwright communicates directly with browser engines using **WebSocket**. It does not rely on WebDriver, making it faster and more stable.
+
+---
+
+### Q5. What are Browser, BrowserContext, and Page?
+
+* **Browser** → instance of browser
+* **BrowserContext** → incognito-like session
+* **Page** → tab/window
+
+---
+
+## 🔹 3. LOCATORS & AUTO-WAIT
+
+### Q6. How does auto-wait work?
+
+**Answer:**
+Playwright waits automatically for:
+
+* Element in DOM
+* Element visible
+* Element stable
+* Element enabled
+
+---
+
+### Q7. Preferred locators?
+
+* `getByRole()` ✅
+* `getByLabel()`
+* `getByText()`
+* `getByTestId()`
+
+---
+
+### Q8. Why avoid XPath?
+
+**Answer:**
+XPath is slow, brittle, and breaks easily with UI changes.
+
+---
+
+## 🔹 4. WAIT MECHANISMS
+
+### Q9. Types of waits in Playwright?
+
+* Auto-wait (default)
+* `waitForSelector()`
+* `waitForLoadState()`
+* `waitForTimeout()` (avoid)
+
+---
+
+### Q10. When do you use explicit wait?
+
+**Answer:**
+Only for special cases like animations, file downloads, or third-party delays.
+
+---
+
+## 🔹 5. PARALLEL EXECUTION
+
+### Q11. How does Playwright support parallel execution?
+
+**Answer:**
+Using **workers** defined in `playwright.config.ts`.
+
+```ts
+workers: 4
+```
+
+---
+
+### Q12. How do you control parallelism in CI?
+
+**Answer:**
+By setting workers based on machine capacity.
+
+---
+
+## 🔹 6. FIXTURES & HOOKS
+
+### Q13. What are fixtures?
+
+**Answer:**
+Fixtures provide **setup and teardown logic** like browser launch, login, test data initialization.
+
+---
+
+### Q14. Difference between beforeEach and fixtures?
+
+**Answer:**
+Fixtures are reusable and scalable across tests.
+
+---
+
+## 🔹 7. AUTHENTICATION HANDLING
+
+### Q15. How do you handle login?
+
+**Answer:**
+Using `storageState()` to reuse authenticated session.
+
+```ts
+await context.storageState({ path: 'auth.json' });
+```
+
+---
+
+### Q16. Benefits of storageState?
+
+* Faster execution
+* Avoid repeated logins
+* Stable tests
+
+---
+
+## 🔹 8. API TESTING IN PLAYWRIGHT
+
+### Q17. Can Playwright test APIs?
+
+**Answer:**
+Yes, using `request` context.
+
+---
+
+### Q18. UI + API combination example?
+
+**Answer:**
+Create data via API → validate in UI.
+
+---
+
+## 🔹 9. NETWORK MOCKING
+
+### Q19. How do you mock APIs?
+
+**Answer:**
+Using `page.route()`.
+
+```ts
+await page.route('**/api/user', route =>
+  route.fulfill({ body: JSON.stringify(mockData) })
+);
+```
+
+---
+
+### Q20. Why mock APIs?
+
+* Faster tests
+* Stable tests
+* Test edge cases
+
+---
+
+## 🔹 10. MULTI-TAB / WINDOW HANDLING
+
+### Q21. Handle new tab?
+
+```ts
+const [newPage] = await Promise.all([
+  context.waitForEvent('page'),
+  page.click('a')
+]);
+```
+
+---
+
+### Q22. Handle popup?
+
+```ts
+page.waitForEvent('popup')
+```
+
+---
+
+## 🔹 11. FILE UPLOAD & DOWNLOAD
+
+### Q23. File upload?
+
+```ts
+await page.setInputFiles('input', 'file.pdf');
+```
+
+---
+
+### Q24. File download?
+
+```ts
+page.waitForEvent('download')
+```
+
+---
+
+## 🔹 12. IFRAME HANDLING
+
+### Q25. How do you handle iframes?
+
+**Answer:**
+Using `frameLocator()`.
+
+---
+
+## 🔹 13. FLaky TEST HANDLING 🔥
+
+### Q26. Why tests become flaky?
+
+* Dynamic elements
+* Timing issues
+* Environment instability
+
+---
+
+### Q27. How do you fix flaky tests?
+
+* Better locators
+* Avoid hard waits
+* Stable test data
+* Retry logic
+
+---
+
+## 🔹 14. FRAMEWORK DESIGN
+
+### Q28. Framework structure?
+
+* POM
+* Fixtures
+* Utils
+* Test data (JSON/Excel/DB)
+* CI/CD
+* Reports
+
+---
+
+### Q29. Why POM?
+
+**Answer:**
+Improves maintainability and reusability.
+
+---
+
+## 🔹 15. CI/CD – JENKINS
+
+### Q30. How to integrate with Jenkins?
+
+**Answer:**
+Use npm commands, configure pipeline, publish reports.
+
+---
+
+### Q31. What do you check when CI fails?
+
+**Answer:**
+Logs → reports → screenshots → environment variables.
+
+---
+
+## 🔹 16. REPORTING
+
+### Q32. Reports supported?
+
+* HTML
+* Allure
+
+---
+
+## 🔹 17. SECURITY & PERMISSIONS
+
+### Q33. Handle browser permissions?
+
+```ts
+permissions: ['geolocation']
+```
+
+---
+
+## 🔹 18. CODING ROUND QUESTIONS 🔥
+
+### Q34. Login test
+
+### Q35. API + UI flow
+
+### Q36. Count vowels in string
+
+### Q37. Find unique characters & sort
+
+### Q38. Handle dynamic table
+
+---
+
+## 🔹 19. ADVANCED QUESTIONS (SENIOR LEVEL)
+
+### Q39. How Playwright handles shadow DOM?
+
+**Answer:**
+Playwright supports shadow DOM automatically.
+
+---
+
+### Q40. How do you optimize execution time?
+
+**Answer:**
+Parallel runs, storageState, mocking APIs, selective tests.
+
+---
+
+## 🔹 20. FINAL HR-STYLE QUESTIONS
+
+### Q41. Why Playwright over Selenium?
+
+### Q42. Challenges faced in Playwright?
+
+### Q43. Biggest framework you built?
+
+### Q44. How do you mentor juniors?
+
+---
+
+# 🏆 FINAL TIP (VERY IMPORTANT)
+
+In interview, always answer like:
+
+> **What → How → Example → Benefit**
+
+---
+
+## 🚀 NEXT STEPS
+
+I can:
+
+* 🎯 Conduct **full Playwright mock interview**
+* 💻 Do **coding round live**
+* 📄 Create **1-page revision PDF**
+* 🧠 Convert answers into **simple speaking scripts**
+
+Just tell me 👉 **what’s next** 💪

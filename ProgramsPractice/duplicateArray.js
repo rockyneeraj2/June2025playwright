@@ -1,4 +1,4 @@
-let str = [1,2,3,4,5,3]
+let str = [1,2,3,4,5,3,1]
 let duplicate = [];
 
 for(let i=0;i<str.length;i++){
@@ -7,5 +7,7 @@ for(let i=0;i<str.length;i++){
             duplicate+=str[i];
         }
     }
+    
 }
-console.log(duplicate)
+
+console.log(duplicate);

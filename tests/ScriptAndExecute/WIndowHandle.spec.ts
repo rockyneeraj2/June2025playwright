@@ -22,8 +22,12 @@ test(" multiple Tabs", async ({ page: Page }) => {
 
     await newTab.waitForLoadState();
     console.log("New Tab url" + newTab.url);
+    console.log("title" +page.getByText)
     await page.waitForTimeout(5000);
     await newTab.close();
+
+
+    
 
 });
 
