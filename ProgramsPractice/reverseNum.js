@@ -1,11 +1,10 @@
-function reverseNumber(num) {
+let num =232788;
   let reverse = 0;
+    while (num > 0) {
+        let digit = num % 10;          // get last digit
+        reverse = reverse * 10 + digit;
+        num = Math.floor(num / 10);    // remove last digit
+    }
 
-  for ( num= num > 0; num = Math.floor(num / 10) {
-    let digit = num % 10;
-    reverse = reverse * 10 + digit;
-  }
 
-}
-
-console.log(reverseNumber(12345)); // 54321
+console.log(reverse);  // Output: 4321

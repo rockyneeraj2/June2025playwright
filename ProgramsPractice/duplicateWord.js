@@ -8,6 +8,6 @@ for(let char of word){
 
 for(let [key,value] of map){
     if(value>1){
-        console.log(key +"" )
+        console.log(key +"--"  +value)
     }
 }
