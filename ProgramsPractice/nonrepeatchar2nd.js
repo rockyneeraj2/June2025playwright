@@ -1,24 +1,21 @@
-function secondNonRepeating(str) {
+let str = "concerteatikon";
+
     let map = new Map();
 
-    // Count frequency
+    let count =0;
+
+    // Step 1: count characters
     for (let char of str) {
         map.set(char, (map.get(char) || 0) + 1);
     }
 
-    let count = 0;
-
-    // Find second non-repeating
-    for (let char of str) {
-        if (map.get(char) === 1) {
+    // Step 2: find first char with count 1
+    for (let [key,value] of map ) {
+        if (value === 1) {
             count++;
-            if (count === 2) {
-                return char;
-            }
+            if(count===2){
+            console.log(key);
+            break;
+        }
         }
     }
-
-    return null; // if not found
-}
-
-console.log(secondNonRepeating("aabbcddef")); // e
