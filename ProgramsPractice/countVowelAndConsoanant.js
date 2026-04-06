@@ -1,6 +1,5 @@
 const a = "neeraj";
 
-let map = new Map();
 
 let vowel=0;
 let consonant =0;
