@@ -10,7 +10,7 @@ for(let word of st){
         rev+=word[i];
     }
 
-    rev+= " ";
+   rev+= " ";
 
 }
-console.log(rev);
+console.log(rev.trim());
