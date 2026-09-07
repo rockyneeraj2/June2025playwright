@@ -1,4 +1,4 @@
-let str = "I am learning JavaScript automation";
+let str = "I am learning JavaScript automation222";
 
 let words = str.split(" ");
 let longestWord = "";
