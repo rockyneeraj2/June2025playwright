@@ -10,3 +10,17 @@ for (let word of words) {
 }
 
 console.log(longestWord);
+
+/*
+let str = ["pune","delhirr","patnauuuu"]
+
+let long = str[0];
+for(let ss of str){
+    if(ss.length<long.length){
+        long = ss;
+    }
+}
+
+console.log(long);
+
+*/

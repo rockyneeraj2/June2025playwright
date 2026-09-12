@@ -10,3 +10,16 @@ for (let word of words) {
 }
 
 console.log(smallestWord);
+
+/*
+let str = ["pune","delhirr","patnauuuu"]
+
+let small = str[0];
+for(let ss of str){
+    if(ss.length<small.length){
+        small = ss;
+    }
+}
+
+console.log(small);
+*/
