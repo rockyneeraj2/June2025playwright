@@ -1,0 +1,1 @@
+// how the trigger the job in jenkins and how to schedule the job or auto schedule
