@@ -1,303 +1,171 @@
-// what is dynamic webtable and handle
+import { expect, test } from '@playwright/test'
 
 
-/*
-For a **Senior SDET interview**, explain dynamic web tables as: **don’t depend on row numbers or hard-coded
- XPath. Find the row using unique business data, then locate the required cell/action inside that row.**
 
-### 1. Real-time example
+test('WebTable Handle', async ({ page }) => {
 
-Suppose the table changes dynamically:
+    await page.goto("https://demoqa.com/webtables");
 
-| ID  | Customer | Status  | Amount | Action |
-| --- | -------- | ------- | -----: | ------ |
-| 101 | Rahul    | Active  |  ₹5000 | Edit   |
-| 102 | Neeraj   | Pending |  ₹7000 | Edit   |
-| 103 | Amit     | Active  |  ₹3000 | Edit   |
+    // Find row containing Cierra Vega
+    const row = page.locator("//table//tr").filter({ hasText: 'Cierra' });
 
-You want to click **Edit for Neeraj**.
+    //Verify the row
+    await expect(row).toHaveCount(1);
 
-### 2. Best Playwright approach
+    //print complete row
+    console.log(await row.innerText());
 
-```ts
-import { test, expect } from '@playwright/test';
+    // Click Edit inside the same row
+    await row.locator("//span[@title='Edit']").click();
 
-test('handle dynamic web table', async ({ page }) => {
+    /*
+Table
+  ↓
+Find row by unique data
+  ↓
+Cierra Vega
+  ↓
+Find Edit inside that row
+  ↓
+Click Edit
+    */
 
-  await page.goto('https://example.com/customers');
-
-  // Find the row containing Neeraj
-  const row = page.locator('table tbody tr').filter({
-    hasText: 'Neeraj'
-  });
-
-  // Verify the row exists
-  await expect(row).toBeVisible();
-
-  // Get Status from the same row
-  const status = row.locator('td').nth(2);
-  await expect(status).toHaveText('Pending');
-
-  // Click Edit only inside Neeraj's row
-  await row.getByRole('button', { name: 'Edit' }).click();
-});
-```
-
-### Why this is better
-
-❌ Avoid:
-
-```ts
-await page.locator('table tbody tr:nth-child(2) td:nth-child(5)').click();
-```
-
-Because tomorrow the table could become:
-
-```text
-Rahul
-Amit
-Neeraj
-```
-
-Now `nth(2)` points to Amit.
-
-Instead:
-
-```ts
-const row = page.locator('tr').filter({ hasText: 'Neeraj' });
-```
-
-The **business value identifies the row**, so the test survives row reordering.
-
----
-
-## 3. If you need to read all rows
-
-```ts
-const rows = page.locator('table tbody tr');
-
-const count = await rows.count();
-
-for (let i = 0; i < count; i++) {
-
-  const row = rows.nth(i);
-
-  const cells = row.locator('td');
-
-  const customer = await cells.nth(1).innerText();
-  const status = await cells.nth(2).innerText();
-
-  console.log(customer, status);
-}
-```
-
-Output:
-
-```text
-Rahul Active
-Neeraj Pending
-Amit Active
-```
-
----
-
-## 4. Find a row based on multiple conditions
-
-This is very common in real projects.
-
-**Requirement:** Find customer `Neeraj` whose status is `Pending`, then click Delete.
-
-```ts
-const row = page.locator('table tbody tr').filter({
-  hasText: 'Neeraj'
-}).filter({
-  hasText: 'Pending'
 });
 
-await expect(row).toBeVisible();
+test('Get all rows', async ({ page }) => {
 
-await row.getByRole('button', { name: 'Delete' }).click();
-```
+    await page.goto("https://demoqa.com/webtables");
+    const row = page.locator("//table//tr");
+    console.log("no of rows: " + await row.count());
 
-This is much safer than relying on row position.
+    for (let i = 0; i < await row.count(); i++) {
+        console.log(await row.nth(i).innerText());
 
----
+    }
 
-## 5. Dynamic table with column names
 
-Suppose you don't know that **Status is column 3**.
-
-Table:
-
-```text
-Customer | Email | Status | Amount | Action
-```
-
-You can identify the column from the header.
-
-```ts
-const headers = page.locator('table thead th');
-
-const headerCount = await headers.count();
-
-let statusColumn = -1;
-
-for (let i = 0; i < headerCount; i++) {
-
-  const text = (await headers.nth(i).innerText()).trim();
-
-  if (text === 'Status') {
-    statusColumn = i;
-    break;
-  }
-}
-
-console.log('Status column:', statusColumn);
-```
-
-Then:
-
-```ts
-const row = page.locator('table tbody tr').filter({
-  hasText: 'Neeraj'
 });
 
-const status = row.locator('td').nth(statusColumn);
+test('Get all names', async ({ page }) => {
 
-console.log(await status.innerText());
-```
+    await page.goto("https://demoqa.com/webtables");
+    const names = page.locator("//table//tr");
+    console.log("no of rows: " + await names.count());
 
-This is useful when the application changes column order.
+    for (let i = 0; i < await names.count(); i++) {
+        console.log(await names.nth(i).innerText());
+    }
 
----
 
-# 6. Pagination in dynamic tables
-
-Suppose there are 100 customers but only 10 are displayed per page.
-
-Requirement:
-
-> Find customer `Neeraj` anywhere in the table.
-
-```ts
-while (true) {
-
-  const row = page.locator('table tbody tr').filter({
-    hasText: 'Neeraj'
-  });
-
-  if (await row.count() > 0) {
-
-    console.log('Neeraj found');
-
-    await row.getByRole('button', { name: 'Edit' }).click();
-    break;
-  }
-
-  const nextButton = page.getByRole('button', { name: 'Next' });
-
-  if (await nextButton.isDisabled()) {
-
-    console.log('Customer not found');
-    break;
-  }
-
-  await nextButton.click();
-}
-```
-
-### Interview point
-
-Don't just say:
-
-> "I use `nth()` to handle tables."
-
-Say:
-
-> **"For dynamic tables, I avoid depending on row indexes. I identify the row using a unique business value
-  such as customer ID, order number, or email, and then perform the required action within that row. For
-   pagination, I iterate through pages until I find the target row or reach the last page."**
-
----
-
-# 7. Best approach when the table has `data-testid`
-
-If your application provides stable test IDs, use them.
-
-```html
-<tr data-testid="customer-row-102">
-```
-
-Playwright:
-
-```ts
-const row = page.getByTestId('customer-row-102');
-
-await expect(row).toBeVisible();
-
-await row.getByRole('button', { name: 'Edit' }).click();
-```
-
-For Senior SDET interviews, I would rank locator strategies roughly like:
-
-```text
-Stable data-testid
-       ↓
-Role + accessible name
-       ↓
-Unique business text / attributes
-       ↓
-CSS
-       ↓
-XPath
-       ↓
-nth() / positional XPath  ❌
-```
-
----
-
-## 8. Real interview scenario
-
-**Interviewer:**
-"You have 2,000 records in a web table. The rows are dynamically loaded and their order changes every refresh.
- You need to click Approve for order `ORD-10567`. How will you automate it?"
-
-### Strong Senior SDET answer
-
-> "I would not use a fixed row index because the table is dynamic. I would locate the row using the unique order
-  ID `ORD-10567`. Once I identify that row, I scope the locator to that row and click the Approve action inside
-   it. If the table uses pagination or lazy loading, I would handle pagination or scrolling until the record is
-    found. I would also validate the expected status after the action using a web-first assertion."
-
-```ts
-const row = page.locator('table tbody tr').filter({
-  hasText: 'ORD-10567'
 });
 
-await expect(row).toBeVisible();
+test('Find employee from Department Find an employee whose department is Insurance and click Edit.', async ({ page }) => {
 
-await row.getByRole('button', { name: 'Approve' }).click();
+    await page.goto("https://demoqa.com/webtables");
+    const row = page.locator("//table//tr").filter({ hasText: 'Insurance' }).first();
+    console.log(await row.innerText());
 
-await expect(row).toContainText('Approved');
-```
+    await row.locator("//span[@title='Edit']").click();
 
-### The key concept to remember
 
-```text
-Dynamic Table
-     ↓
-Find unique row
-     ↓
-Scope locator to row
-     ↓
-Find required cell/button
-     ↓
-Perform action
-     ↓
-Validate result
-```
+});
 
-**This "find row → scope inside row → action → verify" pattern is one of the most important Playwright web-table
- patterns for Senior SDET interviews.**
+test('Find the employee whose name is Cierra Vega and department is Insurance.', async ({ page }) => {
 
-*/
+    await page.goto("https://demoqa.com/webtables");
+    const row = page.locator("//table//tr").filter({ hasText: 'Cierra' })
+        .filter({ hasText: 'Insurance' });
+    console.log("no of rows: " + await row.count());
+
+    await expect(row).toHaveCount(1);
+
+    await row.locator("//span[@title='Edit']").click();
+
+});
+
+test('Edit a value in the table After clicking Edit, suppose a popup opens.', async ({ page }) => {
+
+    await page.goto("https://demoqa.com/webtables");
+    const row = page.locator("//table//tr").filter({ hasText: 'Cierra' })
+        .filter({ hasText: 'Insurance' });
+    console.log("no of rows: " + await row.count());
+
+    await expect(row).toHaveCount(1);
+
+    await row.locator("//span[@title='Edit']").click();
+
+
+    await page.getByPlaceholder('Salary')
+        .fill('90000');
+
+    await page.locator("#submit").click();
+
+    //Then verify:
+    const updatedRow = page.locator('//table//tr')
+        .filter({ hasText: 'Cierra' });
+
+    await expect(updatedRow).toContainText('90000');
+
+});
+
+test('Delete a specific row Find Cierra Vega and delete only that record.', async ({ page }) => {
+
+    await page.goto("https://demoqa.com/webtables");
+    const row = page.locator("//table//tr").filter({ hasText: 'Cierra' })
+        .filter({ hasText: 'Insurance' });
+    console.log("no of rows: " + await row.count());
+
+    await expect(row).toHaveCount(1);
+
+    await row.locator("//span[@title='Edit']").click();
+
+
+    await page.getByPlaceholder('Salary')
+        .fill('90000');
+
+    await page.locator("#submit").click();
+
+    //Then verify:
+    const updatedRow = page.locator('//table//tr')
+        .filter({ hasText: 'Cierra' });
+
+    await expect(updatedRow).toContainText('90000');
+
+    /*
+    const row = page.locator('div.rt-tr-group')
+        .filter({ hasText: 'Cierra Vega' });
+    
+    await row.getByRole('button', { name: 'Delete' }).click();
+    
+    await expect(
+        page.locator('div.rt-tr-group')
+            .filter({ hasText: 'Cierra Vega' })
+    ).toHaveCount(0);
+    */
+
+});
+
+test('8. Add a new employee and verify', async ({ page }) => {
+
+    await page.getByRole('button', { name: 'Add' }).click();
+
+    await page.getByPlaceholder('First Name').fill('Neeraj');
+    await page.getByPlaceholder('Last Name').fill('Kumar');
+    await page.getByPlaceholder('name@example.com').fill('neeraj@test.com');
+    await page.getByPlaceholder('Age').fill('34');
+    await page.getByPlaceholder('Salary').fill('80000');
+    await page.getByPlaceholder('Department').fill('QA');
+
+    await page.getByRole('button', { name: 'Submit' }).click();
+
+    //Verify:
+
+    const row = page.locator('div.rt-tr-group')
+        .filter({ hasText: 'Neeraj Kumar' });
+
+    await expect(row).toHaveCount(1);
+    await expect(row).toContainText('QA');
+
+});
+
+

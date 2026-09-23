@@ -87,13 +87,18 @@ means:
 
 Tests can be distributed for parallel execution, with up to 4 workers.
 
-For a **Senior SDET interview**, explain `playwright.config.ts` as the **central control file for your Playwright automation framework**.
+For a **Senior SDET interview**, explain `playwright.config.ts` as the **central control file for your 
+Playwright automation framework**.
 
-The interviewer is usually checking whether you understand **why each setting exists**, not whether you can memorize the syntax.
+The interviewer is usually checking whether you understand **why each setting exists**, not whether you
+ can memorize the syntax.
 
 ## 1. What is `playwright.config.ts`?
 
-> **"`playwright.config.ts` is the central configuration file of my Playwright framework. I use it to configure test execution behavior such as the test directory, browser projects, base URL, timeout, retries, workers, parallel execution, reporters, screenshots, videos, traces, authentication state, and other common settings."**
+> **"`playwright.config.ts` is the central configuration file of my Playwright framework. I use it to
+  configure test execution behavior such as the test directory, browser projects, base URL, timeout, 
+  retries, workers, parallel execution, reporters, screenshots, videos, traces, authentication state,
+   and other common settings."**
 
 Think of it like:
 

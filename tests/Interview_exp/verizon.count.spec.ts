@@ -72,7 +72,10 @@ Mention:
 
 **Interview answer:**
 
-> “For 100 executions, I use TestNG's `invocationCount` with `threadPoolSize`. For example, `invocationCount=100` executes the test 100 times and `threadPoolSize=10` controls concurrency to 10 parallel executions. I prefer controlled concurrency rather than creating 100 threads, and I make sure test data and shared resources are thread-safe.”
+> “For 100 executions, I use TestNG's `invocationCount` with `threadPoolSize`. For example, 
+ `invocationCount=100` executes the test 100 times and `threadPoolSize=10` controls concurrency 
+ to 10 parallel executions. I prefer controlled concurrency rather than creating 100 threads, and 
+ I make sure test data and shared resources are thread-safe.”
 
 
 */
